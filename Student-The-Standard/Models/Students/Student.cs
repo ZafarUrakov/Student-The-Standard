@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Student_The_Standard.Models.Groups;
+using System;
 
 namespace Student_The_Standard.Models.Students
 {
@@ -6,5 +7,8 @@ namespace Student_The_Standard.Models.Students
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+
+        public Group Group { get; set; }
+        public Guid GroupId { get; set; }
     }
 }
