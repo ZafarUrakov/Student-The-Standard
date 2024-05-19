@@ -5,12 +5,14 @@ namespace Student_The_Standard_Test.Services.Foudnations.Students
     public partial class StudentServiceTests
     {
         [Fact]
-        private async Task ShouldAddStudentAsync()
+        private async Task ShouldThrowStudentValidationExceptionOnAddAndLogItAsync()
         {
             // given
+            Student nullStudent = null;
+
 
             // when
-
+            
             // then
         }
     }
