@@ -6,7 +6,7 @@ using Student_The_Standard.Models.Groups;
 
 namespace Student_The_Standard.Services.Foudnations.Groups
 {
-    public class GroupService : IGroupService
+    public partial class GroupService : IGroupService
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -22,11 +22,14 @@ namespace Student_The_Standard.Services.Foudnations.Groups
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Group> AddGroupAsync(Group group)
+        public ValueTask<Group> AddGroupAsync(Group group) =>
+        TryCatch(async () =>
         {
+            ValidateOnAdd(group);
+
             var currentDateTime = this.dateTimeBroker.GetDateTimeOffset();
 
             return await this.storageBroker.InsertGroupAsync(group);
-        }
+        });
     }
 }

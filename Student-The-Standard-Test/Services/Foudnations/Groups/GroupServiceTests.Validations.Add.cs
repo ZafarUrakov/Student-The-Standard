@@ -18,7 +18,7 @@ namespace Student_The_Standard_Test.Services.Foudnations.Groups
 
             var expectedGroupValidationException =
                 new GroupValidationException(
-                    message: "Group validation error occured, fix the errors and try again.",
+                    message: "Group validation error occurred, fix the errors and try again.",
                     innerException: nullGroupException);
 
             // when
@@ -29,6 +29,65 @@ namespace Student_The_Standard_Test.Services.Foudnations.Groups
 
             // then
             actualGroupValidationException.Should().BeEquivalentTo(expectedGroupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                        expectedGroupValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfInputIsInvalid(
+            string invalidString)
+        {
+            // given
+            var invalidGroup = new Group
+            {
+                Name = invalidString
+            };
+
+            var invalidGroupException = new InvalidGroupException();
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Id),
+                values: "Id is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Name),
+                values: "Text is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.CreatedTime),
+                values: "Value is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.ModifiedTime),
+                values: "Value is required");
+
+            var expectedGroupValidationException =
+                new GroupValidationException(
+                    message: "Group validation error occurred, fix the errors and try again.",
+                    innerException: invalidGroupException);
+
+            // when
+            ValueTask<Group> addGroupTask = this.groupService.AddGroupAsync(invalidGroup);
+
+            GroupValidationException actualGroupValidationException =
+                    await Assert.ThrowsAsync<GroupValidationException>(addGroupTask.AsTask);
+
+            // then
+            actualGroupValidationException.Should()
+                .BeEquivalentTo(expectedGroupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                        expectedGroupValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
