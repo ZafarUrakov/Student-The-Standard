@@ -4,7 +4,9 @@ using Student_The_Standard.Brokers.Loggings;
 using Student_The_Standard.Brokers.Storages;
 using Student_The_Standard.Models.Students;
 using Student_The_Standard.Services.Foudnations.Students;
+using System.Linq.Expressions;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Student_The_Standard_Test.Services.Foudnations.Students
 {
@@ -43,5 +45,9 @@ namespace Student_The_Standard_Test.Services.Foudnations.Students
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
+
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Student_The_Standard.Services.Foudnations.Students
 {
-    public class StudentService : IStudentService
+    public partial class StudentService : IStudentService
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
@@ -22,7 +22,12 @@ namespace Student_The_Standard.Services.Foudnations.Students
             this.dateTimeBroker = dateTimeBroker;
         }
 
-        public async ValueTask<Student> AddStudentAsync(Student student) =>
-            await this.storageBroker.InsertStudentAsync(student);
+        public ValueTask<Student> AddStudentAsync(Student student) =>
+        TryCatch(async () =>
+        {
+            ValidateStudentOnAdd(student);
+
+            return await this.storageBroker.InsertStudentAsync(student);
+        });
     }
 }
